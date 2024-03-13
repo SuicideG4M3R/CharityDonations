@@ -1,0 +1,14 @@
+services:
+  postgres_db:
+    image: postgres
+    ports:
+      - 5456:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: charity-donation
+      POSTGRES_USER: charity-donation
+      POSTGRES_DB: charity-donation
+
+volumes:
+  postgres:
