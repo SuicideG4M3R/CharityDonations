@@ -7,14 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}Charity Donations{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script async defer src="{% static "js/app.js" %}"></script>
+    <script defer src="{% static "js/app.js" %}"></script>
 </head>
 <body>
 {% block content %}
 {% endblock %}
 </body>
 <footer>
-    <div class="contact">
+    <div class="contact" id="contact">
         <h2>Skontaktuj się z nami</h2>
         <h3>Formularz kontaktowy</h3>
         <form>
