@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from .forms import RegisterForm, LoginForm
-from .models import Donation, Institution
+from .models import Donation, Institution, Category
 from django.db.models import Sum
 
 
@@ -37,11 +37,20 @@ class LandingPageView(View):
 
 class AddDonationView(View):
     def get(self, request):
-        return render(request, 'form.html')
+        user = request.user
+        if not user.is_authenticated:
+            return redirect('Login')
+        context = {'categories': Category.objects.all() if Category.objects.count() > 0 else None,
+                   'institutions': Institution.objects.all() if Institution.objects.count() > 0 else None,
+                   }
+        return render(request, 'form.html', context)
 
 
 class LoginView(View):
     def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            return redirect('Login')
         form = LoginForm()
         return render(request, 'login.html', {'form': form})
 
