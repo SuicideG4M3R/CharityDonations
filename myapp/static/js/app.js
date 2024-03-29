@@ -255,13 +255,31 @@ document.addEventListener("DOMContentLoaded", function () {
     if (form !== null) {
         new FormSteps(form);
     }
-});
-document.addEventListener('DOMContentLoaded', function() {
+
     const categoryCheckboxes = document.querySelectorAll('input[name="categories"]');
     const institutionRadios = document.querySelectorAll('input[type="radio"]');
     const nextButton = document.getElementById('nextButton');
     const nextButtonCat = document.getElementById('nextButtonCat');
+    const NoInstitutions = document.getElementById('noInstitutions');
 
+    function checkSelectedRadio() {
+        let anyRadioSelected = false;
+        institutionRadios.forEach(radio => {
+            if (radio.checked) {
+                anyRadioSelected = true;
+            }
+        });
+
+        if (!anyRadioSelected) {
+            nextButton.style.display = 'none';
+        } else {
+            nextButton.style.display = '';
+        }
+    }
+    institutionRadios.forEach(radio => {
+    radio.addEventListener('change', checkSelectedRadio);
+    });
+    checkSelectedRadio();
     function filterInstitutions() {
         const selectedCategories = Array.from(categoryCheckboxes)
             .filter(checkbox => checkbox.checked)
@@ -273,9 +291,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (!isAnyInstitutionVisible) {
-            nextButton.style.display = 'none';
+            NoInstitutions.style.display = '';
         } else {
-            nextButton.style.display = '';
+            NoInstitutions.style.display = 'none';
         }
 
         if (selectedCategories.length === 0) {
@@ -298,5 +316,65 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', filterInstitutions);
     });
     filterInstitutions();
-});
 
+});
+// Znajdź pole input
+const bagsInput = document.getElementById('bagsInput');
+
+// Znajdź przycisk "Dalej"
+const bagsInputNextButton = document.getElementById('bagsInputNextButton');
+
+// Dodaj nasłuchiwanie na zdarzenie input na polu input
+bagsInput.addEventListener('input', function() {
+    // Sprawdź, czy pole input zawiera jakieś dane
+    if (bagsInput.value.trim() !== '') {
+        // Jeśli tak, pokaż przycisk "Dalej"
+        bagsInputNextButton.style.display = 'block';
+    } else {
+        // W przeciwnym razie ukryj przycisk "Dalej"
+        bagsInputNextButton.style.display = 'none';
+    }
+});
+const checkInfoButton = document.getElementById('checkInfo');
+const summaryItems = document.getElementById('summaryItems');
+const address = document.getElementById('address');
+const city = document.getElementById('city');
+const postcode = document.getElementById('postcode');
+const phone = document.getElementById('phone');
+const date = document.getElementById('date');
+const time = document.getElementById('time');
+const more_info = document.getElementById('more_info');
+
+checkInfoButton.addEventListener('click', function() {
+    // Pobierz wartości pól formularza
+    const bags = document.querySelector('input[name="bags"]').value;
+
+    const organization = document.querySelector('input[name="organization"]:checked');
+    const organizationName = organization ? organization.parentNode.querySelector('.title').innerText : '';
+    const addressValue = document.querySelector('input[name="address"]').value;
+    const cityValue = document.querySelector('input[name="city"]').value;
+    const postcodeValue = document.querySelector('input[name="postcode"]').value;
+    const phoneValue = document.querySelector('input[name="phone"]').value;
+    const dateValue = document.querySelector('input[name="data"]').value;
+    const timeValue = document.querySelector('input[name="time"]').value;
+    const more_infoValue = document.querySelector('textarea[name="more_info"]').value;
+
+    // Wyświetl podsumowanie
+    summaryItems.innerHTML = `
+    <li>
+        <span class="icon icon-bag"></span>
+        <span class="summary--text">${bags} worki ubrań w dobrym stanie dla dzieci</span>
+    </li>
+    <li>
+        <span class="icon icon-hand"></span>
+        <span class="summary--text">Dary dla "${organizationName}"</span>
+    </li>
+    `;
+    address.innerText = addressValue;
+    city.innerText = cityValue;
+    postcode.innerText = postcodeValue;
+    phone.innerText = phoneValue;
+    date.innerText = dateValue;
+    time.innerText = timeValue;
+    more_info.innerText = more_infoValue;
+});
