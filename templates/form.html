@@ -57,6 +57,7 @@
 
             <form method="post">
                 <!-- STEP 1: class .active is switching steps -->
+            {% csrf_token %}
                 <div data-step="1" class="active">
                     <h3>Zaznacz co chcesz oddać:</h3>
                     {% if categories %}
@@ -234,7 +235,7 @@
 
                     <div class="form-group form-group--buttons">
                         <button type="button" class="btn prev-step">Wstecz</button>
-                        <button type="submit" class="btn">Potwierdzam</button>
+                        <button type="submit" class="btn" id="submitForm">Potwierdzam</button>
                     </div>
                 </div>
             </form>

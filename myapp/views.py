@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.db.utils import ProgrammingError
@@ -44,6 +46,41 @@ class AddDonationView(View):
                    'institutions': Institution.objects.all() if Institution.objects.count() > 0 else None,
                    }
         return render(request, 'form.html', context)
+
+    def post(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return redirect('Login')
+
+        quantity = request.POST.get('bags')
+        categories_ids = request.POST.getlist('categories')
+        institution_id = request.POST.get('organization')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        zip_code = request.POST.get('postcode')
+        pick_up_date_str = request.POST.get('data')
+        pick_up_time = request.POST.get('time')
+        pick_up_comment = request.POST.get('more_info')
+
+        try:
+            pick_up_date = datetime.strptime(pick_up_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return HttpResponse(f'Error daty: {pick_up_date_str}')
+        print(quantity, categories_ids, institution_id, address, city, zip_code, pick_up_date, pick_up_time,
+              pick_up_comment)
+        donation = Donation.objects.create(
+            quantity=quantity,
+            institution_id=institution_id,
+            address=address,
+            city=city,
+            zip_code=zip_code,
+            pick_up_date=pick_up_date,
+            pick_up_time=pick_up_time,
+            pick_up_comment=pick_up_comment,
+            user=user,
+        )
+        donation.categories.set(categories_ids)
+        return redirect('confirmation')
 
 
 class LoginView(View):
@@ -112,3 +149,8 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('home')
+
+
+class ConfirmationView(View):
+    def get(self, request):
+        return render(request, 'form-confirmation.html')
