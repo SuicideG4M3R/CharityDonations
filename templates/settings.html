@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ustawienia</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script defer src="{% static "js/app.js" %}"></script>
+</head>
+<body>
+<header>
+    {% include 'navbar.html' %}
+</header>
+<section class="login-page">
+    <h2>Ustawienia</h2>
+    <form method="post">
+    {% csrf_token %}
+        <div style="font-size: x-large">
+            <p>ID: {{ user.id }}</p>
+            <p>Administrator: {% if user.is_superuser %}Tak{% else %}Nie{% endif %}</p>
+            <p>Email: <label><input name="email" value="{{ user.username }}" type="email"></label></p>        
+            <p>Imię: <label><input name="first_name" value="{{ user.first_name }}"></label></p>        
+            <p>Nazwisko: <label><input name="last_name" value="{{ user.last_name }}"></label></p>
+            <p>Utworzono: {{ user.date_joined }}</p>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            <div id="passwordFields" style="display: none;">
+                <p>Nowe hasło: <input type="password" name="new_password1"></p>
+                <p>Powtórz nowe hasło: <input type="password" name="new_password2"></p>
+            </div>
+            <div style="margin: 40px; padding: 0"></div>
+            <p>Aktualne hasło: <input type="password" name="old_password"></p>
+            <button id="changePassword" type="button" class="btn">Zmień Hasło</button>
+            <button type="submit" class="btn">Zmień Dane</button>
+        </div>
+    </form>
+    <script>
+        document.getElementById("changePassword").addEventListener("click", function() {
+            document.getElementById("changePassword").style.display = "none";
+            document.getElementById("passwordFields").style.display = "block";
+        });
+    </script>
+</section>
+</body>
+</html>

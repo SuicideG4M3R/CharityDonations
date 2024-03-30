@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Użytkownik</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script defer src="{% static "js/app.js" %}"></script>
+<style>
+        /* Dodatkowy styl dla przycisków */
+        .untaken-button {
+            background-color: green;  /* Kolor tła dla przycisku zabranego daru */
+            color: white;  /* Kolor tekstu dla przycisku zabranego daru */
+            padding: 10px 20px; /* Wielkość przycisku */
+            border: none; /* Usunięcie obramowania */
+            border-radius: 5px; /* Zaokrąglenie rogów */
+            cursor: pointer; /* Zmiana kursora na wskaźnik */
+            display: inline-block; /* Ustawienie na linii bieżącej */
+            margin: 0 auto; /* Wyśrodkowanie */
+        }
+        .taken-button {
+            background-color: red;  /* Kolor tła dla przycisku niezabranego daru */
+            color: white;  /* Kolor tekstu dla przycisku niezabranego daru */
+            padding: 10px 20px; /* Wielkość przycisku */
+            border: none; /* Usunięcie obramowania */
+            border-radius: 5px; /* Zaokrąglenie rogów */
+            cursor: pointer; /* Zmiana kursora na wskaźnik */
+            display: inline-block; /* Ustawienie na linii bieżącej */
+            margin: 0 auto; /* Wyśrodkowanie */
+        }
+        .my-donations{
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<header>
+    {% include 'navbar.html' %}
+</header>
+<section class="login-page">
+    <h2>Strona użytkownika</h2>
+    <div style="font-size: x-large">
+        <p>Email: {{ user.username }}</p>
+        <p>Imię: {{ user.first_name }}</p>
+        <p>Nazwisko: {{ user.last_name }}</p>
+    </div>
+</section>
+<div class="my-donations">
+    {% if donations %}
+        <h2>Ilość złożonych darów: {{ donations.count }}</h2>
+        {% for donation in donations %}
+            {% if not donation.is_taken %}
+            <div style="font-size: large">
+                <p style="font-weight: bold">
+                    {{ donation.quantity }}
+                    {% if donation.quantity > 4 %}Toreb
+                    {% elif donation.quantity > 1 %}Torby
+                    {% else %}                      Torba
+                    {% endif %}
+                    dla {{ donation.institution }}
+                </p>
+                <p>({% for category in donation.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+                </p>
+                <p>Czas Odbioru: {{ donation.pick_up_time }} {{ donation.pick_up_date }}</p>
+                <p>Status: {% if donation.is_taken %}Odebrane{% else %}Nieodebrane{% endif %}</p>
+                {% if donation.pick_up_comment %}
+                <p>Komentarz: {{ donation.pick_up_comment }}</p>
+                {% else %}
+                <p>Brak komentarza</p>
+                {% endif %}
+                <form action="{% url 'mark_taken' donation.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="{% if donation.is_taken %}untaken-button{% else %}taken-button{% endif %}">
+                        {% if donation.is_taken %}
+                            Oznacz jako nieodebrany
+                        {% else %}
+                            Oznacz jako odebrany
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+            <h2></h2>
+        {% else %}{% endif %}{% endfor %}
+    {% else %}
+        <h2>Brak przekazanych darów</h2>
+    {% endif %}
+</div>
+
+<div class="my-donations">
+    {% if donations %}
+        <h2>Oddane Dary</h2>
+        {% for donation in donations %}
+        {% if donation.is_taken %}
+            <div style="font-size: large">
+                <p style="font-weight: bold">
+                    {{ donation.quantity }}
+                    {% if donation.quantity > 4 %}Toreb
+                    {% elif donation.quantity > 1 %}Torby
+                    {% else %}                      Torba
+                    {% endif %}
+                    dla {{ donation.institution }}
+                </p>
+                <p>({% for category in donation.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+                </p>
+                <p>Adres: {{ donation.city }}, {{ donation.address }} {{ donation.zip_code }}</p>
+                <p>Czas Odbioru: {{ donation.pick_up_time }} {{ donation.pick_up_date }}</p>
+                <p>Status: {% if donation.is_taken %}Odebrane{% else %}Nieodebrane{% endif %}</p>
+                {% if donation.pick_up_comment %}
+                <p>Komentarz: {{ donation.pick_up_comment }}</p>
+                {% else %}
+                <p>Brak komentarza</p>
+                {% endif %}
+                <form action="{% url 'mark_taken' donation.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="{% if donation.is_taken %}untaken-button{% else %}taken-button{% endif %}">
+                        {% if donation.is_taken %}
+                            Oznacz jako nieodebrany
+                        {% else %}
+                            Oznacz jako odebrany
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+            <h2></h2>
+        {% else %}{% endif %}{% endfor %}{% endif %}
+</div>
+</body>
+</html>

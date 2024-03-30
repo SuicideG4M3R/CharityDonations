@@ -32,10 +32,10 @@ class RegisterForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(
+    email = forms.CharField(
         max_length=150,
         required=True,
-        widget=forms.EmailInput(
+        widget=forms.TextInput(
             attrs={'placeholder': 'Email'}))
     password = forms.CharField(
         max_length=128,
