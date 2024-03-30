@@ -6,8 +6,8 @@
               {{ user.username }} {% else %} 
               {{ user.first_name }} {% endif %}
             <ul class="dropdown">
-              <li><a href="#">Profil</a></li>
-              <li><a href="#">Ustawienia</a></li>
+              <li><a href="{% url 'user' %}">Profil</a></li>
+              <li><a href="{% url 'Settings' %}">Ustawienia</a></li>
                 {% if user.is_superuser %}
               <li><a href="/admin/">Panel Administracyjny</a></li>
                 {% endif %}
